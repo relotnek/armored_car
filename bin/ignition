@@ -1,0 +1,29 @@
+#!/usr/bin/env ruby
+
+require '../lib/armor'
+choice = ""
+x = ArmoredCar.new()
+x.directify
+until choice == "4"
+puts "Specify an option:"
+puts "1. Generate Keys"
+puts "2. Load a file into an Armored Car"
+puts "3. Unload a file from an Armored Car"
+puts "4. exit"
+
+choice = gets.chomp!
+    
+if choice == "1"
+    x.generate
+elsif choice == "2"
+    puts "Which file would you like to load: (absolute directory)"
+    x.loader(gets.chomp!)
+elsif choice == "3"
+    puts "Which file would you like to unload: (absolute directory)"
+    x.unloader(gets.chomp!)
+elsif choice == "4"
+    puts "Goodbye"
+else
+    puts "You have specified an invalid option"
+end
+end
