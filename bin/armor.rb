@@ -1,8 +1,8 @@
+require 'rbnacl'
 class ArmoredCar
-  def load(file)
+  def loader(file)
     #grabs a key from the user
-    puts "Choose a super secret password:"
-    key = gets.chomp!
+    key = RbNaCl::Random.random_bytes(RbNaCl::SecretBox.key_bytes)
     
     #instantiates secret box named car
     car = RbNaCl::SecretBox.new(key)
@@ -16,10 +16,13 @@ class ArmoredCar
     #encrypts
     ciphertext = car.encrypt(nonce,target)
     
-    puts ciphertext
+    File.new("/Users/kentoler/Development/Ruby/armored_car/tests/untitledenc.txt", "w+").write(ciphertext)
+    puts File.read("/Users/kentoler/Development/Ruby/armored_car/tests/untitledenc.txt")
   end
   
-  def unload(file)
+  def unloader(file)
+    #open / decrypt file
+    
   end
   
   def transport
@@ -29,7 +32,5 @@ end
 
 
 x = ArmoredCar.new()
-
-x.load(gets.chomp!)
-
+x.loader("/Users/kentoler/Development/Ruby/armored_car/tests/untitled.txt")
 
