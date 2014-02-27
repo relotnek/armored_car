@@ -1,27 +1,35 @@
-require 'openssl'
 class ArmoredCar
-  def target
-    cipher = OpenSSL::Cipher.new('aes-256-cbc')
-    cipher.encrypt
-    key = cipher.random_key
-    iv = cipher.random_iv
-    @file = gets.chomp!
-    buf = ""
-    File.open(@file, "wb") do |outf|
-      File.open(@file, "rb") do |inf|
-        while inf.read(4096, buf)
-          outf << cipher.update(buf)
-        end
-        outf << cipher.final
-      end
-    end
-    #Decryption
-    #openssl enc aes-256-cbc -d -in file.txt.enc -out file.txt
+  def load(file)
+    #grabs a key from the user
+    puts "Choose a super secret password:"
+    key = gets.chomp!
+    
+    #instantiates secret box named car
+    car = RbNaCl::SecretBox.new(key)
+    
+    #creates a one time value based on the new secret box
+    nonce = RbNaCl::Random.random_bytes(car.nonce_bytes)
+    
+    #reads message to encrypt
+    target = File.open(file).read
+    
+    #encrypts
+    ciphertext = car.encrypt(nonce,target)
+    
+    puts ciphertext
   end
   
-  def dispatch
+  def unload(file)
   end
+  
+  def transport
+  end
+  
 end
 
+
 x = ArmoredCar.new()
-x.target
+
+x.load(gets.chomp!)
+
+
