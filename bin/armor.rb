@@ -1,7 +1,7 @@
 require 'rbnacl'
 class ArmoredCar
   def loader(file)
-    #grabs a key from the user
+    #grabs a key from the user, for now generates random key
     key = RbNaCl::Random.random_bytes(RbNaCl::SecretBox.key_bytes)
     
     #instantiates secret box named car
@@ -26,6 +26,7 @@ class ArmoredCar
   end
   
   def transport
+    #send file
   end
   
 end
