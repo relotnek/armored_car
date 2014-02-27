@@ -1,43 +1,36 @@
 require 'rbnacl'
 
 class ArmoredCar
-  def loader(file)
-    #grabs a key from the user, for now generates random key
-    puts "We're carving out a key for you:"
-    puts "Here's your key:"
-    key = RbNaCl::Random.random_bytes(RbNaCl::SecretBox.key_bytes)
+  def loader()
+
+    private_key = File.open("/Users/kentoler/Desktop/privatekey")
+    public_key = File.open("/Users/kentoler/Desktop/publickey")
+    # initialize the box
+    box = RbNaCl::Box.new(File.read(public_key), File.read(private_key))
     
-    puts "Keep this key safe, this is how you'll open the armored car."
+    nonce = RbNaCl::Random.random_bytes(box.nonce_bytes)
     
-    #instantiates secret box named car
-    car = RbNaCl::SecretBox.new(key)
+    message = gets.chomp
+    ciphertext = box.encrypt(nonce, message)
     
-    #creates a one time value based on the new secret box
-    nonce = RbNaCl::Random.random_bytes(car.nonce_bytes)
-    
-    #reads message to encrypt
-    target = File.open(file).read
-    
-    #encrypts
-    ciphertext = car.encrypt(nonce,target)
-    
-    File.new("/Users/kentoler/Development/Ruby/armored_car/tests/untitledenc.txt", "w+").write(ciphertext)
-    puts File.read("/Users/kentoler/Development/Ruby/armored_car/tests/untitledenc.txt")
+    encryptedmessage = File.new("/Users/kentoler/Desktop/encrypted", "w+")
+    File.write(encryptedmessage, ciphertext)
+
   end
   
   def unloader(file)
     #open / decrypt file
-    puts "Key please..."
-    key = gets.chomp
     
     #instantiates secret box named car
-    car = RbNaCl::SecretBox.new(key)
-    
-    #creates a one time value based on the new secret box
-    nonce = RbNaCl::Random.random_bytes(car.nonce_bytes)
-    
-    ciphertext = File.open(file).read
-    puts car.decrypt(nonce,ciphertext)
+    # decrypt a message
+    # NB: Same nonce used here.
+    decrypted_message = other_box.decrypt(nonce, ciphertext)
+    #=> "..."
+
+    # But if the ciphertext has been tampered with:
+    other_box.open(nonce, corrupted_ciphertext)
+    #=> RbNaCl::CryptoError exception is raised.
+    # Chosen ciphertext attacks are prevented by authentication and constant-time comparisons
     
   end
   
@@ -45,12 +38,21 @@ class ArmoredCar
     #send file
   end
   
+  def generate
+    #Tool for generating public and private keys
+    #Tool for generating public and private keys
+    private_key = RbNaCl::PrivateKey.generate
+    public_key = private_key.public_key
+    
+    privkeystore = File.new("/Users/kentoler/Desktop/privatekey", "w+")
+    pubkeystore = File.new("/Users/kentoler/Desktop/publickey", "w+")
+    
+    File.write(privkeystore, private_key)
+    File.write(pubkeystore, public_key)
+  end
+  
 end
 
 
 x = ArmoredCar.new()
-puts "Specify the absolute location of your file:"
-x.loader(gets.chomp!)
-
-puts "Specify the absolute locaton of the encrypted file:"
-x.unloader(gets.chomp!)
+x.loader
