@@ -1,5 +1,10 @@
 require 'rbnacl'
 class ArmoredCar
+  def directify
+    puts "What's our directory?"
+    @directory = gets.chomp
+  end
+
   def loader(file)
     #grabs a keyfile from the user
     puts "Where is your keyfile?"
@@ -18,9 +23,9 @@ class ArmoredCar
     ciphertext = car.encrypt(nonce,target)
     
     #creates encrypted file
-    File.new("/home/ktoler/Desktop/untitledenc.txt", "w+").write(ciphertext)
+    File.new("#{@directory}untitledenc.txt", "w+").write(ciphertext)
     #creates nonce file for user to use in decryption
-    File.new("/home/ktoler/Desktop/verificationtag", "w+").write(nonce)  
+    File.new("#{@directory}verificationtag", "w+").write(nonce)  
   end
   
   def unloader(file)
@@ -40,9 +45,9 @@ class ArmoredCar
     target = File.open(file).read
 
     #Decrypts File
-    message = car.decrypt(File.read("/home/ktoler/Desktop/verificationtag"),target)
+    message = car.decrypt(File.read("#{@directory}verificationtag"),target)
 
-    File.new("/home/ktoler/Desktop/untitleddecoded.txt", "w+").write(ciphertext)
+    File.new("#{@directory}untitleddecoded.txt", "w+").write(ciphertext)
   end
   
   def transport
@@ -50,9 +55,8 @@ class ArmoredCar
   end
 
   def generate
-    puts "To generate a keyfile, give me the path you would like to use:"
-    keyfilepath = gets.chomp
-    keyfile = File.new("/home/ktoler/Desktop/keyfile", "w+")
+    puts "Generating keyfile in specified directory #{@directory}:"
+    keyfile = File.new("#{@directory}keyfile", "w+")
     File.write(keyfile,RbNaCl::Random.random_bytes(RbNaCl::SecretBox.key_bytes))
   end
   
@@ -60,11 +64,14 @@ end
 
 
 x = ArmoredCar.new()
+
+x.directify
+
 puts "GENERATING"
 x.generate
 
-puts "LOADING"
-x.loader("/home/ktoler/Desktop/untitled.txt")
+puts "LOAD: Give the absolute path of your file:"
+x.loader(gets.chomp)
 
-puts "DECRYPTING"
-x.unloader("/home/ktoler/Desktop/untitledenc.txt")
+puts "DECRYPT: Give the absolute path of your encrypted file:"
+x.unloader(gets.chomp)
