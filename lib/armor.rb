@@ -15,7 +15,6 @@ class ArmoredCar
     #instantiates secret box named car
     car = RbNaCl::SecretBox.new(key)
    
-    
     #creates a one time value based on the new secret box
     nonce = RbNaCl::Random.random_bytes(car.nonce_bytes)
     
