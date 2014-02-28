@@ -29,8 +29,8 @@ class ArmoredCar
     
     #creates encrypted file
     puts "Name your encrypted file:"
-    inputfile = gets.chomp!
-    cipherfile = File.new("#{@directory}#{inputfile}", "w+")
+    inputfilestring = gets.chomp!
+    cipherfile = File.new("#{@directory}#{inputfilestring}", "w+")
     cipherfile.write(ciphertext)
     cipherfile.close 
     #creates nonce file for user to use in decryption
@@ -64,8 +64,10 @@ class ArmoredCar
     message = car.decrypt(nonce,target)
     puts "Name your output file:"
     puts "You must place the proper extension at the end"
-    outputfile = gets.chomp!
-    File.new("#{@directory}#{outputfile}", "w+").write(message)
+    outputfilestring = gets.chomp!
+    outputfile = File.new("#{@directory}#{outputfilestring}", "w+")
+    outputfile.write(message)
+    outputfile.close
   end
   
   def transport
