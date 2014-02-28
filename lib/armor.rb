@@ -34,7 +34,7 @@ class ArmoredCar
     cipherfile.write(ciphertext)
     cipherfile.close 
     #creates nonce file for user to use in decryption
-    noncefile = File.new("#{@directory}vtag-#{inputfile}", "w+")
+    noncefile = File.new("#{@directory}vtag-#{inputfilestring}", "w+")
     noncefile.write(nonce)
     noncefile.close 
   end
